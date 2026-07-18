@@ -1,4 +1,4 @@
-# T-Console-V2-Plus
+# IT-Console-V2-Plus
 
 > **Next-generation Open Source Infrastructure Operations Platform**
 > **Status:** 🚧 Under Active Development
