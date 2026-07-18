@@ -1,0 +1,1 @@
+"""Software inventory web package."""
