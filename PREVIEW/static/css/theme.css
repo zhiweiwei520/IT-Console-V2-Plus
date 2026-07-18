@@ -1,0 +1,314 @@
+/*
+  theme.css — 唯一樣式檔（CLAUDE.md B1 / V2+ 11-final-architecture.md §3.5）。
+  不新建其他 *.css；新頁面樣式以 module 前綴（.v2c-*）append 到本檔對應段落。
+  色值一律 var(--*)，禁止寫死色碼。三刻度盤：DESIGN_VARIANCE=3／MOTION_INTENSITY=2／
+  VISUAL_DENSITY=7（清單頁）。
+*/
+
+[data-theme="dark"] {
+  --bg: #0f1420;
+  --bg-surface: #151b2b;
+  --bg-elevated: #1b2336;
+  --bg-hover: #212b42;
+  --text: #e6e9f0;
+  --text-muted: #8a91a6;
+  --border: #2a3348;
+  --card-bg: #151b2b;
+  --card-border: #2a3348;
+  --input-bg: #10141f;
+  --input-border: #2a3348;
+  --primary: #4c8dff;
+  --primary-soft: rgba(76, 141, 255, 0.15);
+  --info: #57c7ff;
+  --success: #3ecf8e;
+  --success-soft: rgba(62, 207, 142, 0.15);
+  --warning: #f0b23e;
+  --warning-soft: rgba(240, 178, 62, 0.15);
+  --danger: #f16565;
+  --danger-soft: rgba(241, 101, 101, 0.15);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --bg: #f4f6fb;
+  --bg-surface: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-hover: #eef1f8;
+  --text: #1b2333;
+  --text-muted: #5b6478;
+  --border: #d8dce6;
+  --card-bg: #ffffff;
+  --card-border: #d8dce6;
+  --input-bg: #ffffff;
+  --input-border: #c7ccd9;
+  --primary: #2f68d6;
+  --primary-soft: rgba(47, 104, 214, 0.1);
+  --info: #1c8fbf;
+  --success: #1f9c66;
+  --success-soft: rgba(31, 156, 102, 0.1);
+  --warning: #a86a06;
+  --warning-soft: rgba(168, 106, 6, 0.1);
+  --danger: #c73b3b;
+  --danger-soft: rgba(199, 59, 59, 0.1);
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, "Segoe UI", "Noto Sans TC", system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+a { color: var(--primary); }
+
+/* ── Topbar ─────────────────────────────────────────── */
+.v2c-topbar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 30;
+  min-height: 57px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+}
+.v2c-topbar-brand { font-weight: 600; }
+.v2c-brand-plus { color: var(--primary); }
+.v2c-topbar-actions { display: flex; align-items: center; gap: 8px; }
+.v2c-active-scope {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.v2c-active-scope strong { color: var(--text); }
+.v2c-sidebar-toggle { display: none; }
+
+/* ── Layout ─────────────────────────────────────────── */
+.v2c-app-shell { margin-left: 250px; padding-top: 57px; min-height: 100vh; }
+.v2c-main { max-width: 1280px; margin: 0 auto; padding: 24px 20px 48px; }
+.v2c-footer {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 16px;
+  border-top: 1px solid var(--border);
+}
+
+h1, h2, h3 { font-weight: 600; margin: 0 0 12px; }
+.v2c-page-title { font-size: 20px; margin-bottom: 4px; }
+.v2c-page-subtitle { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+
+/* ── Sidebar（沿用 IT Console V2 左側階層式選單）──────── */
+.v2c-sidebar {
+  position: fixed;
+  inset: 57px auto 0 0;
+  z-index: 20;
+  width: 250px;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+}
+.v2c-sidebar-nav { padding: 12px 8px; }
+.v2c-sidebar-nav a,
+.v2c-sidebar-group summary,
+.v2c-sidebar-subgroup summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 9px 12px;
+  border-radius: 6px;
+  color: var(--text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  list-style: none;
+}
+.v2c-sidebar-nav summary::-webkit-details-marker { display: none; }
+.v2c-sidebar-nav a:hover,
+.v2c-sidebar-nav summary:hover { color: var(--text); background: var(--bg-hover); }
+.v2c-sidebar-nav a.active { color: var(--primary); background: var(--primary-soft); }
+.v2c-nav-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+.v2c-sidebar-subgroup { margin-left: 14px; }
+.v2c-sidebar-subnav { margin-left: 31px; border-left: 1px solid var(--border); }
+.v2c-sidebar-subnav a { min-height: 36px; padding: 7px 12px; border-radius: 0 6px 6px 0; }
+.v2c-sidebar-backdrop { display: none; }
+.v2c-active-tenant-label { color: var(--text-muted); }
+.v2c-active-tenant-label strong { color: var(--text); }
+
+/* ── Buttons ────────────────────────────────────────── */
+.v2c-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: none;
+}
+.v2c-btn:hover { background: var(--bg-hover); }
+.v2c-btn:active { transform: translateY(1px); }
+.v2c-btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.v2c-btn-primary:hover { filter: brightness(1.08); }
+.v2c-btn-sm { padding: 5px 10px; font-size: 13px; }
+.v2c-btn-icon { padding: 6px 8px; }
+.v2c-inline-form { display: inline; }
+
+/* ── Forms ──────────────────────────────────────────── */
+.v2c-field { margin-bottom: 16px; }
+.v2c-field label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.v2c-field input,
+.v2c-field select {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 14px;
+}
+.v2c-field input:focus,
+.v2c-field select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+/* Toolbar 等非 .v2c-field 內的獨立 select（例如帳號頁 Tenant 選擇器） */
+.v2c-toolbar select {
+  padding: 7px 10px;
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 13px;
+}
+.v2c-field-help { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.v2c-field-error { font-size: 12px; color: var(--danger); margin-top: 4px; }
+
+.v2c-login-card {
+  max-width: 380px;
+  margin: 48px auto;
+  padding: 28px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+}
+
+/* ── Flash ──────────────────────────────────────────── */
+.v2c-flash-stack { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+.v2c-flash {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+}
+.v2c-flash-success { background: var(--success-soft); border-color: var(--success); color: var(--success); }
+.v2c-flash-danger { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+.v2c-flash-warning { background: var(--warning-soft); border-color: var(--warning); color: var(--warning); }
+
+/* ── Environment cards ──────────────────────────────── */
+.v2c-env-list { display: flex; flex-direction: column; border-top: 1px solid var(--border); }
+.v2c-env-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.v2c-env-name { font-weight: 600; }
+.v2c-env-slug { color: var(--text-muted); font-size: 12px; font-family: ui-monospace, monospace; }
+.v2c-badge-active { color: var(--success); font-size: 12px; border: 1px solid var(--success); padding: 2px 8px; border-radius: 10px; }
+
+/* ── Table（VISUAL_DENSITY=7：monospace 數字、1px 分隔線、無卡片容器）──── */
+.v2c-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.v2c-table th {
+  text-align: left;
+  color: var(--text-muted);
+  font-weight: 500;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.v2c-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); }
+.v2c-table tbody tr:hover { background: var(--bg-hover); }
+.v2c-mono { font-family: ui-monospace, "SFMono-Regular", monospace; }
+.v2c-status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.v2c-status-dot.on { background: var(--success); }
+.v2c-status-dot.off { background: var(--text-muted); }
+
+.v2c-empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+}
+
+.v2c-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+
+/* ── 原生 form 控件主題化 ───────────────────────────── */
+select, input[type="text"], input[type="password"] { color-scheme: inherit; }
+
+@media (max-width: 820px) {
+  .v2c-sidebar-toggle { display: inline-flex; }
+  .v2c-active-scope span { display: none; }
+  .v2c-sidebar { transform: translateX(-100%); transition: transform 160ms ease; }
+  .v2c-sidebar.is-open { transform: translateX(0); }
+  .v2c-sidebar-backdrop {
+    position: fixed;
+    inset: 57px 0 0 0;
+    z-index: 15;
+    border: 0;
+    background: var(--bg);
+    opacity: 0.72;
+  }
+  .v2c-sidebar-backdrop.is-open { display: block; }
+  .v2c-app-shell { margin-left: 0; }
+  .v2c-topbar { padding-inline: 12px; }
+  .v2c-main { padding-inline: 14px; }
+  .v2c-toolbar { align-items: flex-start; flex-direction: column; }
+}
+
+/* dashboard KPI 卡片（C8 跨模組聚合；auto-fit 自適應，色值走 var(--*)） */
+.v2c-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.v2c-kpi-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+.v2c-kpi-label { color: var(--text-muted); font-size: 13px; margin-bottom: 6px; }
+.v2c-kpi-value { color: var(--text); font-size: 28px; font-weight: 600; line-height: 1.1; }
+.v2c-kpi-empty { color: var(--text-muted); padding: 24px 0; }
