@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}成員 — {{ environment.name }}{% endblock %}
+{% block content %}
+<h1 class="v2c-page-title">環境成員：{{ environment.name }}</h1>
+<p class="v2c-page-subtitle">
+  <span class="v2c-mono">{{ environment.slug }}</span>
+  — 使用者需先在
+  <a href="{{ url_for('platform_admin.new_principal') }}">新增使用者</a>
+  頁面建立，才能出現在下方選單。
+</p>
+
+<div class="v2c-login-card" style="max-width: 480px; margin: 0 0 32px;">
+  <h2 style="font-size:15px; margin-bottom:16px;">新增成員</h2>
+  <form method="post">
+    {{ form.csrf_token }}
+    <div class="v2c-field">
+      {{ form.principal_id.label }}
+      {{ form.principal_id() }}
+    </div>
+    <div class="v2c-field">
+      {{ form.role_code.label }}
+      {{ form.role_code() }}
+    </div>
+    <div class="v2c-field">
+      <label>
+        {{ form.all_managed_tenants() }}
+        {{ form.all_managed_tenants.label.text }}
+      </label>
+      <div class="v2c-field-help">未勾選時預設不授予任何 Managed Tenant，需另外設定 Tenant Grant。</div>
+    </div>
+    <button type="submit" class="v2c-btn v2c-btn-primary">新增成員</button>
+  </form>
+</div>
+
+<h2 style="font-size:15px; margin-bottom:12px;">目前成員</h2>
+{% if not memberships %}
+  <div class="v2c-empty-state">目前沒有任何成員。</div>
+{% else %}
+  <table class="v2c-table">
+    <thead>
+      <tr>
+        <th>使用者</th>
+        <th>狀態</th>
+        <th>全部 Tenant</th>
+        <th>Version</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in memberships %}
+        <tr>
+          <td>{{ m.principal.display_name }}</td>
+          <td>{{ m.status }}</td>
+          <td>{{ "是" if m.all_managed_tenants else "否" }}</td>
+          <td class="v2c-mono">{{ m.version }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

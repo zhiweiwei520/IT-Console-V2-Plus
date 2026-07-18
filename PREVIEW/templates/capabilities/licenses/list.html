@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}授權與 MFA 稽核 — IT Console V2+{% endblock %}
+{% block content %}
+<div class="v2c-toolbar"><div><h1 class="v2c-page-title">授權與 MFA 稽核</h1><p class="v2c-page-subtitle">目前 Tenant：{{ nav_tenant.display_name }}</p></div>{% if context.has_permission('licenses.sync') %}<form method="post" action="{{ url_for('licenses.sync_licenses') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="v2c-btn v2c-btn-sm">立即同步</button></form>{% endif %}</div>
+<h2>授權配額</h2>
+<table class="v2c-table"><thead><tr><th>SKU</th><th>狀態</th><th>已用</th><th>可用</th></tr></thead><tbody>{% for s in skus %}<tr><td>{{ s.sku_part_number }}</td><td>{{ s.capability_status or '—' }}</td><td>{{ s.consumed_units }}</td><td>{{ s.enabled_units - s.consumed_units }}</td></tr>{% else %}<tr><td colspan="4">尚無資料</td></tr>{% endfor %}</tbody></table>
+<h2 class="v2c-section-title">MFA 註冊</h2>
+<table class="v2c-table"><thead><tr><th>使用者</th><th>UPN</th><th>已註冊</th><th>方法</th></tr></thead><tbody>{% for u in users %}<tr><td>{{ u.user_display_name or '—' }}</td><td>{{ u.user_principal_name }}</td><td>{{ '是' if u.is_mfa_registered else '否' }}</td><td>{{ u.methods_registered or '—' }}</td></tr>{% else %}<tr><td colspan="4">尚無資料</td></tr>{% endfor %}</tbody></table>
+{% endblock %}

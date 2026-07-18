@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}新增使用者 — 平台管理{% endblock %}
+{% block content %}
+<h1 class="v2c-page-title">新增使用者</h1>
+<p class="v2c-page-subtitle">建立 Principal；平台帳號欄位留空即為僅供未來 Entra SSO 綁定的身分（尚未支援）。</p>
+
+<form method="post" style="max-width: 480px;">
+  {{ form.csrf_token }}
+  <div class="v2c-field">
+    {{ form.display_name.label }}
+    {{ form.display_name() }}
+  </div>
+  <div class="v2c-field">
+    {{ form.platform_username.label }}
+    {{ form.platform_username() }}
+  </div>
+  <div class="v2c-field">
+    {{ form.platform_password.label }}
+    {{ form.platform_password() }}
+    <div class="v2c-field-help">至少 12 碼，需含大寫字母與數字。</div>
+  </div>
+  <div class="v2c-field">
+    <label>
+      {{ form.platform_operator() }}
+      {{ form.platform_operator.label.text }}
+    </label>
+    <div class="v2c-field-help">只授予 Control Plane 權限（建立/管理環境），不隱含任何 Environment 資料存取。</div>
+  </div>
+  <button type="submit" class="v2c-btn v2c-btn-primary">建立</button>
+  <a href="{{ url_for('platform_admin.list_principals') }}" class="v2c-btn">取消</a>
+</form>
+{% endblock %}

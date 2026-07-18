@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Managed Tenant — IT Console V2+{% endblock %}
+{% block content %}
+<div class="v2c-toolbar">
+  <div>
+    <h1 class="v2c-page-title">Managed Tenant</h1>
+    <p class="v2c-page-subtitle">此環境已連接的 Entra Tenant（BYO app 自助輸入版）。</p>
+  </div>
+  {% if context.has_permission("environment.tenants.manage") %}
+    <a href="{{ url_for('managed_tenants.new_managed_tenant') }}" class="v2c-btn v2c-btn-primary">新增 Tenant</a>
+  {% endif %}
+</div>
+
+{% if not tenants %}
+  <div class="v2c-empty-state">
+    尚未連接任何 Managed Tenant。點「新增 Tenant」輸入您在自己 Entra Tenant 建立的
+    App Registration（tenant id／client id／client secret）。
+  </div>
+{% else %}
+  <table class="v2c-table">
+    <thead>
+      <tr>
+        <th>顯示名稱</th>
+        <th>Entra Tenant ID</th>
+        <th>狀態</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tenants %}
+        <tr>
+          <td>{{ t.display_name }}</td>
+          <td class="v2c-mono">{{ t.entra_tenant_id }}</td>
+          <td>
+            <span class="v2c-status-dot {{ 'on' if t.status == 'active' else 'off' }}"></span>
+            {{ t.status }}
+          </td>
+          <td>
+            {% if context.active_managed_tenant_id == t.id %}
+              <span class="v2c-badge-active">目前管理中</span>
+            {% elif t.status in ('active', 'degraded') %}
+              <form method="post" action="{{ url_for('managed_tenants.switch_managed_tenant', tenant_id=t.id) }}" class="v2c-inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="v2c-btn v2c-btn-sm v2c-btn-primary">進入管理</button>
+              </form>
+            {% endif %}
+            {% if context.has_permission("environment.tenants.manage") %}
+            <form method="post" action="{{ url_for('managed_tenants.test_connection', tenant_id=t.id) }}" class="v2c-inline-form">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="v2c-btn v2c-btn-sm">測試連線</button>
+            </form>
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

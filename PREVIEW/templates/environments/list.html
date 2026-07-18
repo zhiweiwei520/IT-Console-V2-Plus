@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}環境 — IT Console V2+{% endblock %}
+{% block content %}
+<h1 class="v2c-page-title">我的環境</h1>
+<p class="v2c-page-subtitle">僅列出您實際具有 Membership 的環境；平台角色不隱含任何環境存取。</p>
+
+{% if not memberships %}
+  <div class="v2c-empty-state">目前沒有任何環境成員資格，請聯絡環境管理者邀請加入。</div>
+{% else %}
+  <div class="v2c-env-list">
+    {% for m in memberships %}
+      <div class="v2c-env-row">
+        <div>
+          <div class="v2c-env-name">{{ m.environment.name }}</div>
+          <div class="v2c-env-slug">{{ m.environment.slug }}</div>
+        </div>
+        <div style="display:flex; align-items:center; gap:12px;">
+          {% if active_id == m.environment_id|string %}
+            <span class="v2c-badge-active">目前使用中</span>
+          {% endif %}
+          <form method="post" action="{{ url_for('environments.switch_environment', environment_id=m.environment_id) }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="v2c-btn v2c-btn-sm">切換</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+{% endblock %}

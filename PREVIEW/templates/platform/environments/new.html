@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}新增環境 — 平台管理{% endblock %}
+{% block content %}
+<h1 class="v2c-page-title">新增環境</h1>
+<p class="v2c-page-subtitle">建立後會自動配置內建角色（environment_admin／viewer）。</p>
+
+<form method="post" style="max-width: 480px;">
+  {{ form.csrf_token }}
+  <div class="v2c-field">
+    {{ form.slug.label }}
+    {{ form.slug() }}
+    <div class="v2c-field-help">僅限英數字與連字號，用於環境代碼與登入時的環境識別。</div>
+  </div>
+  <div class="v2c-field">
+    {{ form.name.label }}
+    {{ form.name() }}
+  </div>
+  <button type="submit" class="v2c-btn v2c-btn-primary">建立</button>
+  <a href="{{ url_for('platform_admin.list_environments') }}" class="v2c-btn">取消</a>
+</form>
+{% endblock %}

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-Hant" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}IT Console V2+{% endblock %}</title>
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem("v2c-theme");
+        if (saved === "light" || saved === "dark") document.documentElement.setAttribute("data-theme", saved);
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/theme.css') }}">
+</head>
+<body>
+  {% if current_user.is_authenticated %}
+    <header class="v2c-topbar">
+      <button type="button" class="v2c-btn v2c-btn-icon v2c-sidebar-toggle" id="v2c-sidebar-toggle"
+              aria-label="開啟選單" aria-controls="v2c-sidebar" aria-expanded="false">&#9776;</button>
+      <div class="v2c-topbar-brand">IT Console <span class="v2c-brand-plus">V2+</span></div>
+      <div class="v2c-active-scope">
+        {% if nav_environment %}<span>{{ nav_environment.name }}</span>{% endif %}
+        {% if nav_tenant %}<strong>{{ nav_tenant.display_name }}</strong>{% else %}<strong>尚未選擇 Tenant</strong>{% endif %}
+      </div>
+      <div class="v2c-topbar-actions">
+        <button type="button" class="v2c-btn v2c-btn-icon" id="v2c-theme-toggle" title="切換主題" aria-label="切換主題">
+          <span id="v2c-theme-icon">&#9789;</span>
+        </button>
+        <form method="post" action="{{ url_for('auth.logout') }}" class="v2c-inline-form">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="v2c-btn v2c-btn-sm">登出</button>
+        </form>
+      </div>
+    </header>
+
+    <aside class="v2c-sidebar" id="v2c-sidebar">
+      <nav class="v2c-sidebar-nav" aria-label="主選單">
+        <a class="{{ 'active' if request.endpoint and request.endpoint.startswith('environments.') else '' }}"
+           href="{{ url_for('environments.list_environments') }}"><span class="v2c-nav-icon">E</span><span>環境</span></a>
+
+        {% if nav_environment %}
+          {% if 'environment.tenants.manage' in nav_permissions or 'accounts.view' in nav_permissions or 'accounts.sync' in nav_permissions or 'devices.view' in nav_permissions or 'devices.sync' in nav_permissions or 'signin_logs.view' in nav_permissions or 'signin_logs.sync' in nav_permissions or 'licenses.view' in nav_permissions or 'licenses.sync' in nav_permissions or 'app_audit.view' in nav_permissions or 'app_audit.sync' in nav_permissions or 'software.view' in nav_permissions or 'software.sync' in nav_permissions or 'teams.view' in nav_permissions or 'teams.sync' in nav_permissions or 'sharepoint.view' in nav_permissions or 'sharepoint.sync' in nav_permissions or 'defender.view' in nav_permissions or 'defender.sync' in nav_permissions or 'sentinel.view' in nav_permissions or 'sentinel.sync' in nav_permissions %}
+            <a class="{{ 'active' if request.endpoint and request.endpoint.startswith('managed_tenants.') else '' }}"
+               href="{{ url_for('managed_tenants.list_managed_tenants') }}"><span class="v2c-nav-icon">T</span><span>Tenant 選擇與設定</span></a>
+          {% endif %}
+
+          {% if 'accounts.view' in nav_permissions or 'accounts.sync' in nav_permissions or 'devices.view' in nav_permissions or 'devices.sync' in nav_permissions or 'signin_logs.view' in nav_permissions or 'signin_logs.sync' in nav_permissions or 'licenses.view' in nav_permissions or 'licenses.sync' in nav_permissions or 'app_audit.view' in nav_permissions or 'app_audit.sync' in nav_permissions or 'software.view' in nav_permissions or 'software.sync' in nav_permissions or 'teams.view' in nav_permissions or 'teams.sync' in nav_permissions or 'sharepoint.view' in nav_permissions or 'sharepoint.sync' in nav_permissions or 'defender.view' in nav_permissions or 'defender.sync' in nav_permissions or 'sentinel.view' in nav_permissions or 'sentinel.sync' in nav_permissions %}
+            <details class="v2c-sidebar-group" open>
+              <summary><span class="v2c-nav-icon">Q</span><span>查詢功能</span></summary>
+              <a class="{{ 'active' if request.endpoint and request.endpoint.startswith('dashboard.') else '' }}" href="{{ url_for('dashboard.index') }}">總覽儀表板</a>
+              <details class="v2c-sidebar-subgroup" open>
+                <summary><span class="v2c-nav-icon">M</span><span>M365</span></summary>
+                <div class="v2c-sidebar-subnav">
+                  {% if 'accounts.view' in nav_permissions %}
+                    <a class="{{ 'active' if request.endpoint and request.endpoint.startswith('accounts.') else '' }}"
+                       href="{{ url_for('accounts.list_accounts') }}">帳號管理</a>
+                  {% endif %}
+                  {% if 'signin_logs.view' in nav_permissions %}
+                    <a class="{{ 'active' if request.endpoint and request.endpoint.startswith('signin_logs.') else '' }}"
+                       href="{{ url_for('signin_logs.list_sign_ins') }}">登入記錄</a>
+                  {% endif %}
+                  {% if 'licenses.view' in nav_permissions %}<a class="{{ 'active' if request.endpoint and request.endpoint.startswith('licenses.') else '' }}" href="{{ url_for('licenses.list_licenses') }}">授權與 MFA 稽核</a>{% endif %}
+                  {% if 'app_audit.view' in nav_permissions %}<a class="{{ 'active' if request.endpoint and request.endpoint.startswith('app_audit.') else '' }}" href="{{ url_for('app_audit.index') }}">應用程式稽核</a>{% endif %}
+                  {% if 'software.view' in nav_permissions %}<a class="{{ 'active' if request.endpoint and request.endpoint.startswith('software.') else '' }}" href="{{ url_for('software.index') }}">軟體管理</a>{% endif %}
+                  {% if 'teams.view' in nav_permissions %}<a class="{{ 'active' if request.endpoint and request.endpoint.startswith('teams.') else '' }}" href="{{ url_for('teams.index') }}">Teams 團隊管理</a>{% endif %}
+                  {% if 'sharepoint.view' in nav_permissions %}<a class="{{ 'active' if request.endpoint and request.endpoint.startswith('sharepoint.') else '' }}" href="{{ url_for('sharepoint.index') }}">SharePoint 網站管理</a>{% endif %}
+                  {% if 'defender.view' in nav_permissions %}<a class="{{ 'active' if request.endpoint and request.endpoint.startswith('defender.') else '' }}" href="{{ url_for('defender.index') }}">Defender 告警</a>{% endif %}
+                  {% if 'sentinel.view' in nav_permissions %}<a class="{{ 'active' if request.endpoint and request.endpoint.startswith('sentinel.') else '' }}" href="{{ url_for('sentinel.index') }}">資安事件</a>{% endif %}
+                  {% if 'devices.view' in nav_permissions %}
+                    <a class="{{ 'active' if request.endpoint and request.endpoint.startswith('devices.') else '' }}"
+                       href="{{ url_for('devices.list_devices') }}">裝置管理</a>
+                  {% endif %}
+                </div>
+              </details>
+            </details>
+          {% endif %}
+        {% endif %}
+
+        {% if is_platform_operator %}
+          <a class="{{ 'active' if request.endpoint and request.endpoint.startswith('platform_admin.') else '' }}"
+             href="{{ url_for('platform_admin.list_environments') }}"><span class="v2c-nav-icon">P</span><span>平台管理</span></a>
+        {% endif %}
+      </nav>
+    </aside>
+    <button type="button" class="v2c-sidebar-backdrop" id="v2c-sidebar-backdrop" aria-label="關閉選單"></button>
+  {% endif %}
+
+  <div class="{{ 'v2c-app-shell' if current_user.is_authenticated else '' }}">
+    <main class="v2c-main">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="v2c-flash-stack">
+            {% for category, message in messages %}
+              <div class="v2c-flash v2c-flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+      {% block content %}{% endblock %}
+    </main>
+    <footer class="v2c-footer">IT Console V2+ — V2-P0/P2 spike（非正式版）</footer>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+</body>
+</html>

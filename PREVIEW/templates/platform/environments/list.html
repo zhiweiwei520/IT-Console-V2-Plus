@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}環境 — 平台管理{% endblock %}
+{% block content %}
+<div class="v2c-toolbar">
+  <div>
+    <h1 class="v2c-page-title">環境（平台範圍）</h1>
+    <p class="v2c-page-subtitle">列出所有 Environment；一般使用者的「環境」頁只看得到自己有成員資格的子集。</p>
+  </div>
+  <a href="{{ url_for('platform_admin.new_environment') }}" class="v2c-btn v2c-btn-primary">新增環境</a>
+</div>
+
+{% if not environments %}
+  <div class="v2c-empty-state">目前沒有任何環境。</div>
+{% else %}
+  <table class="v2c-table">
+    <thead>
+      <tr>
+        <th>名稱</th>
+        <th>代碼</th>
+        <th>狀態</th>
+        <th>隔離模式</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for env in environments %}
+        <tr>
+          <td>{{ env.name }}</td>
+          <td class="v2c-mono">{{ env.slug }}</td>
+          <td>{{ env.status }}</td>
+          <td class="v2c-mono">{{ env.isolation_mode }}</td>
+          <td>
+            <a href="{{ url_for('platform_admin.manage_memberships', environment_id=env.id) }}" class="v2c-btn v2c-btn-sm">
+              管理成員
+            </a>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

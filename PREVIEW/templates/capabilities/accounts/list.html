@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}帳號 — IT Console V2+{% endblock %}
+{% block content %}
+<h1 class="v2c-page-title">帳號清單</h1>
+<p class="v2c-page-subtitle">
+  透過 accounts.sync 工作從 Microsoft Graph 同步（見 <span class="v2c-mono">manage.py run-worker</span>）；
+  尚未連接任何 Managed Tenant 時可用 <span class="v2c-mono">manage.py seed-demo</span> 產生示範資料。
+</p>
+
+<div class="v2c-toolbar">
+  <div class="v2c-active-tenant-label">目前 Tenant：<strong>{{ nav_tenant.display_name }}</strong></div>
+  {% if context.has_permission("accounts.sync") %}
+    <form method="post" action="{{ url_for('accounts.sync_accounts') }}" class="v2c-inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="v2c-btn v2c-btn-sm">立即同步</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if not accounts %}
+  <div class="v2c-empty-state">目前沒有帳號資料。</div>
+{% else %}
+  <table class="v2c-table">
+    <thead>
+      <tr>
+        <th>顯示名稱</th>
+        <th>UPN</th>
+        <th>狀態</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in accounts %}
+        <tr>
+          <td>{{ a.display_name }}</td>
+          <td class="v2c-mono">{{ a.user_principal_name }}</td>
+          <td>
+            <span class="v2c-status-dot {{ 'on' if a.account_enabled else 'off' }}"></span>
+            {{ "啟用" if a.account_enabled else "停用" }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

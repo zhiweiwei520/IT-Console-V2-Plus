@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}裝置 — IT Console V2+{% endblock %}
+{% block content %}
+<h1 class="v2c-page-title">裝置清單</h1>
+<p class="v2c-page-subtitle">
+  透過 devices.sync 工作從 Microsoft Intune（<span class="v2c-mono">/deviceManagement/managedDevices</span>）
+  同步；需 <span class="v2c-mono">DeviceManagementManagedDevices.Read.All</span> 權限。
+  尚未連接 Managed Tenant 時可用 <span class="v2c-mono">manage.py seed-demo</span> 產生示範資料。
+</p>
+
+<div class="v2c-toolbar">
+  <div class="v2c-active-tenant-label">目前 Tenant：<strong>{{ nav_tenant.display_name }}</strong></div>
+  {% if context.has_permission("devices.sync") %}
+    <form method="post" action="{{ url_for('devices.sync_devices') }}" class="v2c-inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="v2c-btn v2c-btn-sm">立即同步</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if not devices %}
+  <div class="v2c-empty-state">目前沒有裝置資料。</div>
+{% else %}
+  <table class="v2c-table">
+    <thead>
+      <tr>
+        <th>裝置名稱</th>
+        <th>作業系統</th>
+        <th>合規狀態</th>
+        <th>擁有者類型</th>
+        <th>指派使用者</th>
+        <th>序號</th>
+        <th>最後同步</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in devices %}
+        <tr>
+          <td>{{ d.device_name }}</td>
+          <td>{{ d.operating_system or "—" }}{% if d.os_version %} {{ d.os_version }}{% endif %}</td>
+          <td>
+            <span class="v2c-status-dot {{ 'on' if d.compliance_state == 'compliant' else 'off' }}"></span>
+            {{ d.compliance_state or "未知" }}
+          </td>
+          <td>{{ d.owner_type or "—" }}</td>
+          <td class="v2c-mono">{{ d.user_principal_name or "—" }}</td>
+          <td class="v2c-mono">{{ d.serial_number or "—" }}</td>
+          <td class="v2c-mono">{{ d.last_sync_time or "—" }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}

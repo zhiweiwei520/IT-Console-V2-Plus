@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}登入 — IT Console V2+{% endblock %}
+{% block content %}
+<div class="v2c-login-card">
+  <h1 class="v2c-page-title">登入</h1>
+  <p class="v2c-page-subtitle">環境代碼留空即為平台 break-glass 登入。</p>
+  <form method="post">
+    {{ form.csrf_token }}
+    <div class="v2c-field">
+      {{ form.environment_slug.label }}
+      {{ form.environment_slug(placeholder="") }}
+    </div>
+    <div class="v2c-field">
+      {{ form.username.label }}
+      {{ form.username(placeholder="") }}
+    </div>
+    <div class="v2c-field">
+      {{ form.password.label }}
+      {{ form.password(placeholder="") }}
+    </div>
+    <button type="submit" class="v2c-btn v2c-btn-primary">登入</button>
+  </form>
+  {% if entra_sso_enabled %}
+  <div class="v2c-login-sso">
+    <a class="v2c-btn" href="{{ url_for('auth.entra_login') }}">使用 Entra 帳號登入</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}新增 Managed Tenant — IT Console V2+{% endblock %}
+{% block content %}
+<h1 class="v2c-page-title">新增 Managed Tenant（BYO app）</h1>
+<p class="v2c-page-subtitle">
+  請先在您的 Entra Tenant 建立一個 App Registration，並授予所需的 Application permission
+  （至少 <span class="v2c-mono">Organization.Read.All</span> 供測試連線使用），
+  再把以下資訊填入。Client Secret 會加密後存於資料庫，僅供本環境的 Worker 呼叫 Graph 使用。
+</p>
+
+<form method="post" style="max-width: 520px;">
+  {{ form.csrf_token }}
+  <div class="v2c-field">
+    {{ form.entra_tenant_id.label }}
+    {{ form.entra_tenant_id() }}
+  </div>
+  <div class="v2c-field">
+    {{ form.display_name.label }}
+    {{ form.display_name() }}
+  </div>
+  <div class="v2c-field">
+    {{ form.domain.label }}
+    {{ form.domain() }}
+  </div>
+  <div class="v2c-field">
+    {{ form.client_id.label }}
+    {{ form.client_id() }}
+  </div>
+  <div class="v2c-field">
+    {{ form.client_secret.label }}
+    {{ form.client_secret() }}
+  </div>
+  <button type="submit" class="v2c-btn v2c-btn-primary">新增</button>
+  <a href="{{ url_for('managed_tenants.list_managed_tenants') }}" class="v2c-btn">取消</a>
+</form>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}登入記錄 — IT Console V2+{% endblock %}
+{% block content %}
+<h1 class="v2c-page-title">登入記錄</h1>
+<p class="v2c-page-subtitle">
+  透過 signin_logs.sync 工作從 Microsoft Graph（<span class="v2c-mono">/auditLogs/signIns</span>）
+  <strong>增量</strong>同步；需 <span class="v2c-mono">AuditLog.Read.All</span> 權限。首次同步抓最近
+  24 小時，之後只抓比上次更新的記錄（append-only，不刪除舊資料）。清單僅顯示最近 200 筆。
+</p>
+
+<div class="v2c-toolbar">
+  <div class="v2c-active-tenant-label">目前 Tenant：<strong>{{ nav_tenant.display_name }}</strong></div>
+  {% if context.has_permission("signin_logs.sync") %}
+    <form method="post" action="{{ url_for('signin_logs.sync_sign_ins') }}" class="v2c-inline-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button type="submit" class="v2c-btn v2c-btn-sm">立即增量同步</button>
+    </form>
+  {% endif %}
+</div>
+
+{% if not sign_ins %}
+  <div class="v2c-empty-state">目前沒有登入記錄。</div>
+{% else %}
+  <table class="v2c-table">
+    <thead>
+      <tr>
+        <th>時間 (UTC+8)</th>
+        <th>使用者</th>
+        <th>應用程式</th>
+        <th>結果</th>
+        <th>IP</th>
+        <th>用戶端</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in sign_ins %}
+        <tr>
+          <td class="v2c-mono">{{ s.created_datetime | datetime_local("%Y-%m-%d %H:%M:%S") }}</td>
+          <td>
+            {{ s.user_display_name or "—" }}
+            {% if s.user_principal_name %}<br><span class="v2c-mono">{{ s.user_principal_name }}</span>{% endif %}
+          </td>
+          <td>{{ s.app_display_name or "—" }}</td>
+          <td>
+            <span class="v2c-status-dot {{ 'on' if s.status == 'success' else 'off' }}"></span>
+            {% if s.status == "failure" %}
+              失敗{% if s.failure_reason %}（{{ s.failure_reason }}）{% endif %}
+            {% elif s.status == "success" %}成功{% else %}未知{% endif %}
+          </td>
+          <td class="v2c-mono">{{ s.ip_address or "—" }}</td>
+          <td>{{ s.client_app_used or "—" }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endif %}
+{% endblock %}
